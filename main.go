@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 )
+
 type Store struct {
 	Name    string `json:"name,omitempty"`
 	Youtube string `json:"youtube,omitempty"`
@@ -13,6 +14,7 @@ type Store struct {
 
 var store map[string]map[string]string = make(map[string]map[string]string)
 var anotherstore map[string]Store
+
 func main() {
 	router := http.NewServeMux()
 
@@ -21,18 +23,16 @@ func main() {
 		var value map[string]string
 		if err := json.NewDecoder(r.Body).Decode(&value); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			http.Error(w, "error decoding", http.StatusInternalServerError)
 			return
 		}
-    var anotherstorevalue Store
+		var anotherstorevalue Store
 		if err := json.NewDecoder(r.Body).Decode(&anotherstorevalue); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			http.Error(w, "error decoding", http.StatusInternalServerError)
 			return
 		}
 
 		store[id] = value
-    anotherstore[id] = anotherstorevalue
+		anotherstore[id+"ok"] = anotherstorevalue
 		fmt.Println(store)
 	})
 
