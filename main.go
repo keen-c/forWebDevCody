@@ -6,10 +6,13 @@ import (
 	"log"
 	"net/http"
 )
+type Store struct {
+	Name    string `json:"name,omitempty"`
+	Youtube string `json:"youtube,omitempty"`
+}
 
-
-var store map[string]map[string]string = map[string]map[string]string{}
-
+var store map[string]map[string]string = make(map[string]map[string]string)
+var anotherstore map[string]Store
 func main() {
 	router := http.NewServeMux()
 
@@ -21,7 +24,15 @@ func main() {
 			http.Error(w, "error decoding", http.StatusInternalServerError)
 			return
 		}
+    var anotherstorevalue Store
+		if err := json.NewDecoder(r.Body).Decode(&anotherstorevalue); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			http.Error(w, "error decoding", http.StatusInternalServerError)
+			return
+		}
+
 		store[id] = value
+    anotherstore[id] = anotherstorevalue
 		fmt.Println(store)
 	})
 
@@ -36,6 +47,6 @@ func main() {
 
 	log.Println("listening on http://localhost:9292")
 	if err := http.ListenAndServe(":9292", router); err != nil {
-		log.Printf("Can't listen on err %s", err)
+		log.Printf("Can't listen on err %v", err)
 	}
 }
